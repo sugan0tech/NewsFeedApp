@@ -1,36 +1,33 @@
 namespace NewsFeedApp
-#nowarn "20"
-open System
-open System.Collections.Generic
-open System.IO
-open System.Linq
-open System.Threading.Tasks
-open Microsoft.AspNetCore
+
 open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.HttpsPolicy
-open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
-open Microsoft.Extensions.Logging
+open Microsoft.EntityFrameworkCore
+open NewsFeedApp
 
 module Program =
-    let exitCode = 0
 
     [<EntryPoint>]
     let main args =
-
         let builder = WebApplication.CreateBuilder(args)
 
+        // Add services to the container.
+        builder.Services.AddScoped<INewsRepository, NewsRepository>()
+        builder.Services.AddScoped<INewsService, NewsService>()
         builder.Services.AddControllers()
 
         let app = builder.Build()
 
-        app.UseHttpsRedirection()
+        // Configure the HTTP request pipeline.
+        if app.Environment.IsDevelopment() then
+            app.UseDeveloperExceptionPage()
 
+        app.UseHttpsRedirection()
         app.UseAuthorization()
         app.MapControllers()
 
         app.Run()
 
-        exitCode
+        0 // Return an integer exit code
+``
